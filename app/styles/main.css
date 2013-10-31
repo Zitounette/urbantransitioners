@@ -1,0 +1,41 @@
+body {
+    background: #fafafa;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+.title {
+    display: inline-block;
+}
+
+.cont {
+    margin: 0 auto;
+    width: 400px;
+}
+
+.link{
+    display: inline-block;
+    padding: 20px;
+    color: #333;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.body {
+    background-image: url( http://25.media.tumblr.com/9ba88e9a55b119d886fec5acd906684e/tumblr_mkokbauXTu1snojaqo4_r1_1280.jpg);
+}
+.hero-unit {
+    margin: 50px auto 0 auto;
+    width: 300px;
+    font-size: 18px;
+    font-weight: 200;
+    line-height: 30px;
+    background-color: #eee;
+    border-radius: 6px;
+    padding: 60px;
+}
+
+.hero-unit h1 {
+    font-size: 60px;
+    line-height: 1;
+    letter-spacing: -1px;
+}
