@@ -39,7 +39,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['copy:styles', 'autoprefixer']
+        tasks: ['copy:styles', 'autoprefixer', 'prangler']
       },
       livereload: {
         options: {
@@ -236,6 +236,19 @@ module.exports = function (grunt) {
         }]
       }
     },
+    prangler: {
+      default: {
+      options: {
+        ngApp: 'urban', // name of your angular module
+        stripPathForTemplateId: 'app/', // will remove src from the $templcateCache key
+        stripFilenameExtension: false, // if true removes .html from $templateCache key
+        filenameForTemplateId: false, // if true template loaded by filename
+      },
+      files: {
+        'app/scripts/template.js': ['app/views/*.html', 'app/templates/*.html'],
+      }
+    }
+    },
     // Put files not handled in other tasks here
     copy: {
       dist: {
@@ -341,6 +354,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'prangler',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
