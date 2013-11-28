@@ -39,7 +39,8 @@
     "karma-phantomjs-launcher": "~0.1.0",
     "karma": "~0.10.4",
     "karma-ng-html2js-preprocessor": "~0.1.0",
-    "grunt-angular-prangler": "~0.1.4"
+    "grunt-angular-prangler": "~0.1.4",
+    "grunt-s3": "~0.2.0-alpha.3"
   },
   "engines": {
     "node": ">=0.8.0"

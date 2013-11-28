@@ -1,8 +1,10 @@
 // Generated on 2013-10-31 using generator-angular 0.4.0
 'use strict';
 var LIVERELOAD_PORT = 35729;
-var lrSnippet = require('connect-livereload')({ port: LIVERELOAD_PORT });
-var mountFolder = function (connect, dir) {
+var lrSnippet = require('connect-livereload')({
+  port: LIVERELOAD_PORT
+});
+var mountFolder = function(connect, dir) {
   return connect.static(require('path').resolve(dir));
 };
 
@@ -12,7 +14,7 @@ var mountFolder = function (connect, dir) {
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
@@ -72,7 +74,7 @@ module.exports = function (grunt) {
       },
       livereload: {
         options: {
-          middleware: function (connect) {
+          middleware: function(connect) {
             return [
               lrSnippet,
               mountFolder(connect, '.tmp'),
@@ -83,7 +85,7 @@ module.exports = function (grunt) {
       },
       test: {
         options: {
-          middleware: function (connect) {
+          middleware: function(connect) {
             return [
               mountFolder(connect, '.tmp'),
               mountFolder(connect, 'test')
@@ -93,7 +95,7 @@ module.exports = function (grunt) {
       },
       dist: {
         options: {
-          middleware: function (connect) {
+          middleware: function(connect) {
             return [
               mountFolder(connect, yeomanConfig.dist)
             ];
@@ -127,6 +129,44 @@ module.exports = function (grunt) {
         'Gruntfile.js',
         '<%= yeoman.app %>/scripts/{,*/}*.js'
       ]
+    },
+    aws: grunt.file.readJSON('grunt-aws.json'),
+    s3: {
+      options: {
+        key: '<%= aws.key %>',
+        secret: '<%= aws.secret %>',
+        bucket: '<%= aws.bucket %>',
+        access: 'public-read',
+        headers: {
+          // Two Year cache policy (1000 * 60 * 60 * 24 * 730)
+          'Cache-Control': 'max-age=630720000, public',
+          'Expires': new Date(Date.now() + 63072000000).toUTCString()
+        }
+      },
+      dev: {
+        // These options override the defaults
+        options: {
+          encodePaths: true,
+          maxOperations: 20
+        },
+        sync: [{
+          verify: true,
+          // only upload this document if it does not exist already
+          src: 'dist/index.html',
+          dest: 'index.html'
+        }, {
+          // make sure this document is newer than the one on S3 and replace it
+          verify: true,
+          src: 'dist/styles/*.main.css',
+          dest: 'styles/*.main.css'
+        },
+        {
+          verify: true,
+          src: 'dist/scripts/*.scripts.js',
+          dest: 'scripts/*.scripts.js'
+        }
+        ]
+      }
     },
     coffee: {
       options: {
@@ -238,16 +278,16 @@ module.exports = function (grunt) {
     },
     prangler: {
       default: {
-      options: {
-        ngApp: 'urban', // name of your angular module
-        stripPathForTemplateId: 'app/', // will remove src from the $templcateCache key
-        stripFilenameExtension: false, // if true removes .html from $templateCache key
-        filenameForTemplateId: false, // if true template loaded by filename
-      },
-      files: {
-        'app/scripts/template.js': ['app/views/*.html', 'app/templates/*.html'],
+        options: {
+          ngApp: 'urban', // name of your angular module
+          stripPathForTemplateId: 'app/', // will remove src from the $templcateCache key
+          stripFilenameExtension: false, // if true removes .html from $templateCache key
+          filenameForTemplateId: false, // if true template loaded by filename
+        },
+        files: {
+          'app/scripts/template.js': ['app/views/*.html', 'app/templates/*.html'],
+        }
       }
-    }
     },
     // Put files not handled in other tasks here
     copy: {
@@ -329,7 +369,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('server', function (target) {
+  grunt.registerTask('server', function(target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'open', 'connect:dist:keepalive']);
     }
