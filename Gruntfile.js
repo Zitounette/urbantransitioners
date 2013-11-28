@@ -4,6 +4,7 @@ var LIVERELOAD_PORT = 35729;
 var lrSnippet = require('connect-livereload')({
   port: LIVERELOAD_PORT
 });
+
 var mountFolder = function(connect, dir) {
   return connect.static(require('path').resolve(dir));
 };
@@ -31,14 +32,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     watch: {
-      coffee: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-        tasks: ['coffee:dist']
-      },
-      coffeeTest: {
-        files: ['test/spec/{,*/}*.coffee'],
-        tasks: ['coffee:test']
-      },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
         tasks: ['copy:styles', 'autoprefixer', 'prangler']
@@ -135,8 +128,9 @@ module.exports = function(grunt) {
       options: {
         key: '<%= aws.key %>',
         secret: '<%= aws.secret %>',
-        bucket: '<%= aws.bucket %>',
+        bucket: 'urbantransitioners',
         access: 'public-read',
+        region: 'Ireland',
         headers: {
           // Two Year cache policy (1000 * 60 * 60 * 24 * 730)
           'Cache-Control': 'max-age=630720000, public',
@@ -149,54 +143,30 @@ module.exports = function(grunt) {
           encodePaths: true,
           maxOperations: 20
         },
-        sync: [{
-          verify: true,
-          // only upload this document if it does not exist already
+        upload: [{
+          verify: false,
           src: 'dist/index.html',
           dest: 'index.html'
         }, {
           // make sure this document is newer than the one on S3 and replace it
           verify: true,
           src: 'dist/styles/*.main.css',
-          dest: 'styles/*.main.css'
+          dest: 'styles/*.main.css',
+          options: {
+            gzip: true
+          }
         },
         {
           verify: true,
           src: 'dist/scripts/*.scripts.js',
-          dest: 'scripts/*.scripts.js'
+          dest: 'scripts/*.scripts.js',
+          options: {
+            gzip: true
+          }
         }
         ]
       }
     },
-    coffee: {
-      options: {
-        sourceMap: true,
-        sourceRoot: ''
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/scripts',
-          src: '{,*/}*.coffee',
-          dest: '.tmp/scripts',
-          ext: '.js'
-        }]
-      },
-      test: {
-        files: [{
-          expand: true,
-          cwd: 'test/spec',
-          src: '{,*/}*.coffee',
-          dest: '.tmp/spec',
-          ext: '.js'
-        }]
-      }
-    },
-    // not used since Uglify task does concat,
-    // but still available if needed
-    /*concat: {
-      dist: {}
-    },*/
     rev: {
       dist: {
         files: {
@@ -322,15 +292,12 @@ module.exports = function(grunt) {
     },
     concurrent: {
       server: [
-        'coffee:dist',
         'copy:styles'
       ],
       test: [
-        'coffee',
         'copy:styles'
       ],
       dist: [
-        'coffee',
         'copy:styles',
         'imagemin',
         'svgmin',
